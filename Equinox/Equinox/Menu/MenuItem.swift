@@ -38,19 +38,13 @@ final class MenuItem: NSMenuItem {
         keyEquivalent charCode: String,
         keyModifier: NSEvent.ModifierFlags,
         action selector: Selector?,
-        target: AnyObject = self as AnyObject,
+        target: AnyObject? = nil,
         isEnabled: Bool = true
     ) {
         super.init(title: string, action: selector, keyEquivalent: charCode)
-        keyEquivalentModifierMask = keyModifier
+        self.keyEquivalentModifierMask = keyModifier
         self.isEnabled = isEnabled
         self.target = target
-    }
-    
-    init(title string: String, submenuItems: [NSMenuItem]) {
-        super.init(title: string, action: nil, keyEquivalent: String())
-        self.submenu = NSMenu()
-        self.submenu?.items = submenuItems
     }
     
     required init(coder: NSCoder) {

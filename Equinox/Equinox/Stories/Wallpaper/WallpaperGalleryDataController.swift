@@ -31,6 +31,12 @@ import EquinoxAssets
 import EquinoxCore
 import EquinoxUI
 
+extension WallpaperGalleryDataController {
+    private enum Constants {
+        static let oneDaySeconds = 24 * 60 * 60
+    }
+}
+
 final class WallpaperGalleryDataController {
     private let type: WallpaperType
     private let fileService: FileService
@@ -87,10 +93,11 @@ final class WallpaperGalleryDataController {
     }
     
     func make(_ urls: [URL], insertIndexPath: IndexPath) -> [(indexPath: IndexPath, model: GalleryModel)] {
-        var calendar = Calendar.current
-        calendar.timeZone = TimeZone(identifier: "GMT") ?? .current
+        let calendar = getCurrentCalendar
         let startTime = calendar.startOfDay(for: Date())
         var newData: [(IndexPath, GalleryModel)] = []
+        let oneDaySeconds = 24 * 60 * 60
+        let oneImageInterval = oneDaySeconds / urls.count
         
         for (index, url) in urls.enumerated() {
             let newIndex = insertIndexPath.item + index
@@ -99,7 +106,8 @@ final class WallpaperGalleryDataController {
             
             let isPrimary = isPrimaryIndex(count)
             let imageData = calculateImageData(url)
-            let time = calendar.date(byAdding: .hour, value: count, to: startTime)
+            let addingInterval = data.items.isEmpty ? oneImageInterval * index : 0
+            let time = calendar.date(byAdding: .second, value: addingInterval, to: startTime)
             
             let model = GalleryModel(
                 number: newIndex + 1,
@@ -159,22 +167,22 @@ final class WallpaperGalleryDataController {
             return nil
         }
         let timezone = metadata.timezone ?? .current
-        let timezoneHours = timezone.secondsFromGMT() / 60 / 60
-        let daylightSavingTimeValue = timezone.isDaylightSavingTime(for: date) ? 1 : 0
+        let endOfDate = endOfDay(date: date)
+        let timezoneHours = timezone.secondsFromGMT(for: endOfDate) / 60 / 60
         guard
             let solarAzimuth = try? solarService.azimuth(
                 latitude: latitude,
                 longitude: longitude,
                 date: date,
                 timezone: timezoneHours,
-                dlstime: daylightSavingTimeValue
+                dlstime: 0
             ),
             let solarAltitude = try? solarService.altitude(
                 latitude: latitude,
                 longitude: longitude,
                 date: date,
                 timezone: timezoneHours,
-                dlstime: daylightSavingTimeValue
+                dlstime: 0
             )
         else {
             return nil
@@ -183,7 +191,7 @@ final class WallpaperGalleryDataController {
         let altitude = roundDouble(solarAltitude, places: 3)
         return (azimuth, altitude)
     }
-    
+
     private func calculateFilesize(_ url: URL) -> UInt64? {
         do {
             let filesize = try fileService.getFilesize(url)
@@ -192,7 +200,7 @@ final class WallpaperGalleryDataController {
             return nil
         }
     }
-    
+
     private func getFormattedFilesize(filesize: UInt64) -> String {
         return ByteCountFormatter.string(fromByteCount: Int64(filesize), countStyle: .file)
     }
@@ -204,5 +212,12 @@ final class WallpaperGalleryDataController {
     private func roundDouble(_ value: Double, places: Int) -> Double {
         let divisor = pow(10.0, Double(places))
         return round(value * divisor) / divisor
+    }
+    
+    private func endOfDay(date: Date) -> Date {
+        let calendar = getCurrentCalendar
+        let endOfDayTimeInterval = TimeInterval(Constants.oneDaySeconds - 1)
+        let endOfDay = calendar.startOfDay(for: date).addingTimeInterval(endOfDayTimeInterval)
+        return endOfDay
     }
 }

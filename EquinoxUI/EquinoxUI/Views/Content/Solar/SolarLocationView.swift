@@ -85,7 +85,6 @@ extension SolarLocationView {
         static let dateHeaderLabelLeadingOffset: CGFloat = 20
         static let dateHeaderLabelTopOffset: CGFloat = 16
         static let locationButtonTopOffset: CGFloat = 16
-        static let locationButtonTrailingOffset: CGFloat = 16
         static let locationButtonWidth: CGFloat = 23
         static let locationButtonHeight: CGFloat = 23
         static let latitudeTextFieldTopOffset: CGFloat = 10
@@ -98,6 +97,7 @@ extension SolarLocationView {
         static let longitudeTextFieldHeight: CGFloat = 40
         static let datePickerTopOffset: CGFloat = 10
         static let datePickerHeight: CGFloat = 40
+        static let datePickerWidth: CGFloat = 140
         static let datePickerTrailingOffset: CGFloat = 20
     }
 }
@@ -213,6 +213,7 @@ public final class SolarLocationView: View {
 
             datePicker.topAnchor.constraint(equalTo: dateHeaderLabel.bottomAnchor, constant: Constants.datePickerTopOffset),
             datePicker.leadingAnchor.constraint(equalTo: dateHeaderLabel.leadingAnchor),
+            datePicker.widthAnchor.constraint(equalToConstant: Constants.datePickerWidth),
             datePicker.heightAnchor.constraint(equalToConstant: Constants.datePickerHeight),
             datePicker.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Constants.datePickerTrailingOffset)
         ])

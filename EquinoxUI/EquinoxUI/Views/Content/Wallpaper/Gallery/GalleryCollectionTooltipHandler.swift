@@ -31,57 +31,67 @@ import AppKit
 public final class GalleryCollectionTooltipHandler {
     public var style: TooltipWindow.Style?
     
-    public var appearanceToopltipTitle: String?
-    public var appearanceToopltipDescription: String?
-    public var primaryToopltipTitle: String?
-    public var primaryToopltipDescription: String?
+    public var appearanceTooltipTitle: String?
+    public var appearanceTooltipDescription: String?
+    public var primaryTooltipTitle: String?
+    public var primaryTooltipDescription: String?
 }
 
 // MARK: - TooltipDelegate
 
 extension GalleryCollectionTooltipHandler: TooltipDelegate {
-    public func tooltipTitle(_ sender: Any?) -> String {
-        var title: String
-
-        switch sender {
-        case is DynamicButton:
-            title = appearanceToopltipTitle ?? String()
-
-        case is PrimaryButton:
-            title = primaryToopltipTitle ?? String()
-
+    public func tooltipTitle(_ sender: NSView?) -> String {
+        guard
+            let tooltipable = sender as? Tooltipable,
+            let identifier = tooltipable.tooltipIdentifier
+        else {
+            return String()
+        }
+        
+        let title: String?
+        
+        switch identifier {
+        case GalleryContentView.TooltipIdentifier.appearance.rawValue:
+            title = appearanceTooltipTitle
+        case GalleryContentView.TooltipIdentifier.primary.rawValue:
+            title = primaryTooltipTitle
         default:
             title = String()
         }
-
-        return title
+        
+        return title ?? String()
     }
     
-    public func tooltipDescription(_ sender: Any?) -> String {
-        var description: String
-
-        switch sender {
-        case is DynamicButton:
-            description = appearanceToopltipDescription ?? String()
-
-        case is PrimaryButton:
-            description = primaryToopltipDescription ?? String()
-
+    public func tooltipDescription(_ sender: NSView?) -> String {
+        guard
+            let tooltipable = sender as? Tooltipable,
+            let identifier = tooltipable.tooltipIdentifier
+        else {
+            return String()
+        }
+        
+        let description: String?
+        
+        switch identifier {
+        case GalleryContentView.TooltipIdentifier.appearance.rawValue:
+            description = appearanceTooltipDescription
+        case GalleryContentView.TooltipIdentifier.primary.rawValue:
+            description = primaryTooltipDescription
         default:
             description = String()
         }
-
-        return description
+        
+        return description ?? String()
     }
 
-    public func tooltipViewForFooter(_ sender: Any?) -> NSView? {
+    public func tooltipViewForFooter(_ sender: NSView?) -> NSView? {
         return nil
     }
 
-    public func tooltipWillDisplayView(_ sender: Any?, view: NSView) {
+    public func tooltipWillDisplayView(_ sender: NSView?, view: NSView) {
     }
     
-    public func tooltipStyle(_ sender: Any?) -> TooltipWindow.Style? {
+    public func tooltipStyle(_ sender: NSView?) -> TooltipWindow.Style? {
         return style
     }
 }

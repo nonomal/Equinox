@@ -43,6 +43,11 @@ extension GalleryContentView {
             self.dragStyle = dragStyle
         }
     }
+    
+    enum TooltipIdentifier: String {
+        case appearance
+        case primary
+    }
 }
 
 // MARK: - Class
@@ -186,6 +191,15 @@ public final class GalleryContentView: View {
         }
         set {
             galleryCollectionView.isSelectionEnabled = newValue
+        }
+    }
+    
+    public var selectedIndexPaths: Set<IndexPath> {
+        get {
+            return galleryCollectionView.selectedIndexPaths
+        }
+        set {
+            galleryCollectionView.selectedIndexPaths = newValue
         }
     }
 

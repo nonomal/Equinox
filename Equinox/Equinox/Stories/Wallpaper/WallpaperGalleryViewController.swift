@@ -38,6 +38,7 @@ protocol WallpaperGalleryViewControllerDelegate: AnyObject {
     func openBrowseDialog()
     func presentAppearancePopover(relativeTo view: NSView, selectedType: EquinoxUI.AppearanceType)
     func closePopover()
+    func notify(_ text: String)
 }
 
 // MARK: - Enums, Structs
@@ -127,11 +128,10 @@ final class WallpaperGalleryViewController: ViewController {
             altitudeText: Localization.Wallpaper.Gallery.altitude,
             altitudePlaceholder: Localization.Wallpaper.Gallery.altitudeValue,
             timeText: Localization.Wallpaper.Gallery.time,
-            timeTextPlaceholder: Localization.Wallpaper.Gallery.timeValue,
-            appearanceToopltipTitle: Localization.Wallpaper.Gallery.tooltipAppearanceTitle,
-            appearanceToopltipDescription: Localization.Wallpaper.Gallery.tooltipAppearanceDescription,
-            primaryToopltipTitle: Localization.Wallpaper.Gallery.tooltipPrimaryTitle,
-            primaryToopltipDescription: Localization.Wallpaper.Gallery.tooltipPrimaryDescription
+            appearanceTooltipTitle: Localization.Wallpaper.Gallery.tooltipAppearanceTitle,
+            appearanceTooltipDescription: Localization.Wallpaper.Gallery.tooltipAppearanceDescription,
+            primaryTooltipTitle: Localization.Wallpaper.Gallery.tooltipPrimaryTitle,
+            primaryTooltipDescription: Localization.Wallpaper.Gallery.tooltipPrimaryDescription
         )
     }
     
@@ -225,6 +225,11 @@ final class WallpaperGalleryViewController: ViewController {
         contentView.isDragHighlighted = false
         contentView.isSelectionEnabled = !isEmpty
     }
+    
+    @objc
+    func collectionMenuDeleteItems(_ sender: Any) {
+        deleteCollectionItems()
+    }
 }
 
 // MARK: - Drag and Drop
@@ -265,18 +270,27 @@ extension WallpaperGalleryViewController: WallpaperGalleryDragControllerDelegate
     }
 
     func processExternalCollectionItems(_ urls: [URL], insertIndexPath: IndexPath) {
-        var urls = imageProvider.validateImages(urls, imageFormat: [.jpeg, .png, .tiff, .heic])
-
+        var validatedUrls = imageProvider.validateImages(urls)
+        
+        if urls.count != validatedUrls.count {
+            let wrongImagesCount = urls.count - validatedUrls.count
+            delegate?.notify(Localization.Wallpaper.Gallery.wrongImagesType(param1: wrongImagesCount))
+        }
+        
+        guard !validatedUrls.isEmpty else {
+            return
+        }
+        
         switch type {
         case .solar, .time:
             break
             
         case .appearance:
-            let distance = min(Constants.maxAppearanceItemsCount - dataController.data.items.count, urls.count)
-            urls = Array(urls[0..<distance])
+            let distance = min(Constants.maxAppearanceItemsCount - dataController.data.items.count, validatedUrls.count)
+            validatedUrls = Array(validatedUrls[0..<distance])
         }
         
-        let items = dataController.make(urls, insertIndexPath: insertIndexPath)
+        let items = dataController.make(validatedUrls, insertIndexPath: insertIndexPath)
         let models = items.map { $0.model }
         let indexPaths = items.map { $0.indexPath }
         
@@ -295,7 +309,11 @@ extension WallpaperGalleryViewController: WallpaperGalleryDragControllerDelegate
         })
     }
 
-    func deleteCollectionItems(_ indexPaths: [IndexPath]) {
+    func deleteCollectionItems() {
+        let indexPaths = contentView
+            .selectedIndexPaths
+            .sorted(by: >)
+        
         for indexPath in indexPaths {
             dataController.remove(at: indexPath.item)
         }
@@ -363,5 +381,18 @@ extension WallpaperGalleryViewController: WallpaperGalleryDragControllerDelegate
 
     func collectionDidScroll() {
         delegate?.closePopover()
+    }
+    
+    func collectionMenuNeedsUpdate(_ menu: NSMenu) {
+        let count = contentView.selectedIndexPaths.count
+        
+        menu.removeAllItems()
+        let item = NSMenuItem(
+            title: Localization.Wallpaper.Gallery.menuDelete(param1: count),
+            action: #selector(collectionMenuDeleteItems(_:)),
+            keyEquivalent: String()
+        )
+        item.target = self
+        menu.addItem(item)
     }
 }

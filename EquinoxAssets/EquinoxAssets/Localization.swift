@@ -77,6 +77,12 @@ public enum Localization {
         
         public enum Help {
             public static let help = Localization.localizedString(key: "menu.help")
+            public static let githubProject = Localization.localizedString(key: "menu.help.githubProject")
+            public static let githubFAQ = Localization.localizedString(key: "menu.help.githubFAQ")
+            public static let githubIssue = Localization.localizedString(key: "menu.help.githubIssue")
+            public static let equinoxWebsite = Localization.localizedString(key: "menu.help.equinoxWebsite")
+            public static let macAppStoreReview = Localization.localizedString(key: "menu.help.macAppStoreReview")
+            public static let productHunt = Localization.localizedString(key: "menu.help.productHunt")
         }
     }
     
@@ -116,6 +122,14 @@ public enum Localization {
         }
         
         public enum Gallery {
+            public static func menuDelete(param1: Int) -> String {
+                return String(format: Localization.localizedString(key: "delete"), arguments: [param1])
+            }
+            
+            public static func wrongImagesType(param1: Int) -> String {
+                return String(format: Localization.localizedString(key: "wallpaper.gallery.wrong.images.type"), arguments: [param1])
+            }
+            
             public static let dragTitle = Localization.localizedString(key: "wallpaper.gallery.drag.title")
             public static let dragSupplementary = Localization.localizedString(key: "wallpaper.gallery.drag.supplementary")
             public static let or = Localization.localizedString(key: "wallpaper.gallery.or")
@@ -125,7 +139,6 @@ public enum Localization {
             public static let altitude = Localization.localizedString(key: "wallpaper.gallery.altitude")
             public static let altitudeValue = Localization.localizedString(key: "wallpaper.gallery.azimuth.value")
             public static let time = Localization.localizedString(key: "wallpaper.gallery.time")
-            public static let timeValue = Localization.localizedString(key: "wallpaper.gallery.time.value")
             public static let tooltipAppearanceTitle = Localization.localizedString(key: "wallpaper.gallery.tooltip.appearance.title")
             public static let tooltipAppearanceDescription = Localization.localizedString(key: "wallpaper.gallery.tooltip.appearance.description")
             public static let tooltipPrimaryTitle = Localization.localizedString(key: "wallpaper.gallery.tooltip.primary.title")
@@ -166,6 +179,9 @@ public enum Localization {
         
         public enum Set {
             public static let title = Localization.localizedString(key: "wallpaper.set.title")
+            public static let descriptionTitleOld = Localization.localizedString(key: "wallpaper.set.description.title.old")
+            public static let todoOld = Localization.localizedString(key: "wallpaper.set.todo.old")
+            public static let todoLinkOld = Localization.localizedString(key: "wallpaper.set.todo.link.old")
             public static let descriptionTitle = Localization.localizedString(key: "wallpaper.set.description.title")
             public static let todo = Localization.localizedString(key: "wallpaper.set.todo")
             public static let todoLink = Localization.localizedString(key: "wallpaper.set.todo.link")
@@ -190,6 +206,13 @@ public enum Localization {
             public static let sunTimeline = Localization.localizedString(key: "solar.main.sun.timeline")
             public static let timezone = Localization.localizedString(key: "solar.main.timezone")
             public static let locationError = Localization.localizedString(key: "solar.main.location.error")
+            public static let daylightSavingTimeTitle = Localization.localizedString(key: "solar.main.dst.title")
+            public static let daylightSavingTimeTooltipTitle = Localization.localizedString(key: "solar.main.dst.tooltip.title")
+            public static let daylightSavingTimeTooltipDescription = Localization.localizedString(key: "solar.main.dst.tooltip.description")
+            public static let abbreviationTooltipTitle = Localization.localizedString(key: "solar.main.abbreviation.tooltip.title")
+            public static let abbreviationTooltipDescription = Localization.localizedString(key: "solar.main.abbreviation.tooltip.description")
+            public static let dragAndDropTooltipTitle = Localization.localizedString(key: "solar.main.drag.and.drop.tooltip.title")
+            public static let dragAndDropTooltipDescription = Localization.localizedString(key: "solar.main.drag.and.drop.tooltip.description")
         }
     }
     

@@ -38,10 +38,11 @@ protocol WallpaperGalleryDragControllerDelegate: AnyObject {
     func refreshCollectionData(_ index: Int, field: GalleryModel.MutateField, sender: Any?)
     func processInternalCollectionItems(_ indexPaths: [IndexPath], insertIndexPath: IndexPath)
     func processExternalCollectionItems(_ urls: [URL], insertIndexPath: IndexPath)
-    func deleteCollectionItems(_ indexPaths: [IndexPath])
+    func deleteCollectionItems()
     func canValidateCollectionDrag() -> Bool
     func loadImage(url: URL, completion: @escaping (NSImage?) -> Void)
     func collectionDidScroll()
+    func collectionMenuNeedsUpdate(_ menu: NSMenu)
 }
 
 // MARK: - Enums, Structs
@@ -93,8 +94,7 @@ final class WallpaperGalleryDragController {
         let indexPaths: [IndexPath] = pasteboardItems.compactMap { item in
             guard
                 let pasteboardData = item.data(forType: Constants.collectionDragType),
-                let unarchivedData = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(pasteboardData),
-                let indexPath = unarchivedData as? IndexPath
+                let indexPath = try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSIndexPath.self, from: pasteboardData) as? IndexPath
             else {
                 return nil
             }
@@ -131,7 +131,7 @@ extension WallpaperGalleryDragController: GalleryCollectionViewDelegate {
     }
 
     func pasteboardWriter(for collectionView: NSCollectionView, indexPath: IndexPath) -> NSPasteboardWriting? {
-        guard let data = try? NSKeyedArchiver.archivedData(withRootObject: indexPath, requiringSecureCoding: false) else {
+        guard let data = try? NSKeyedArchiver.archivedData(withRootObject: indexPath as NSIndexPath, requiringSecureCoding: true) else {
             return nil
         }
         let pasteboardItem = NSPasteboardItem()
@@ -193,8 +193,7 @@ extension WallpaperGalleryDragController: GalleryCollectionViewDelegate {
         guard !collectionView.selectionIndexes.isEmpty else {
             return
         }
-        let selectedIndexPaths = collectionView.selectionIndexPaths.sorted(by: >)
-        delegate?.deleteCollectionItems(selectedIndexPaths)
+        delegate?.deleteCollectionItems()
     }
 
     func loadImage(url: URL, completion: @escaping (NSImage?) -> Void) {
@@ -208,6 +207,10 @@ extension WallpaperGalleryDragController: GalleryCollectionViewDelegate {
 
     func didScroll(_ scrollView: NSScrollView) {
         delegate?.collectionDidScroll()
+    }
+    
+    func menuNeedsUpdate(_ menu: NSMenu) {
+        delegate?.collectionMenuNeedsUpdate(menu)
     }
 }
 
@@ -235,7 +238,7 @@ extension WallpaperGalleryDragController: GalleryCollectionContentViewDelegate {
         guard
             let pasteboardItem = sender.draggingPasteboard.pasteboardItems?.first,
             let pasteboardData = pasteboardItem.data(forType: Constants.solarDragType),
-            let unarchivedData = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(pasteboardData),
+            let unarchivedData = try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSArray.self, from: pasteboardData),
             let results = unarchivedData as? [String],
             let azimuthString = results.first,
             let altitudeString = results.last,

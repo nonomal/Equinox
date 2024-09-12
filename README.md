@@ -1,7 +1,7 @@
 <div><br></div>
 
 <div align="center">
-  <img alt="GitHub Workflow Status (branch)" src="https://img.shields.io/github/workflow/status/rlxone/Equinox/CI/main"> <img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/rlxone/Equinox"> <img alt="GitHub" src="https://img.shields.io/github/license/rlxone/Equinox">
+  <img alt="GitHub Workflow Status (branch)" src="https://img.shields.io/github/actions/workflow/status/rlxone/Equinox/workspace.yml"> <img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/rlxone/Equinox"> <img alt="GitHub" src="https://img.shields.io/github/license/rlxone/Equinox">
 </div>
 
 <div><h1></h1></div>
@@ -109,3 +109,22 @@ Many thanks to the macOS community and special thanks to [mczachurski](https://g
 
 ## License
 [MIT](LICENSE)
+
+## Translation
+
+Equinox is translated to:
+- English
+- French, by [W1W1-M](https://github.com/W1W1-M)
+- Türkçe, by [furkanipek](https://github.com/furkanipek)
+- Chinese (Simplified), by [Chuan Hu](https://github.com/GaiZhenbiao), [DevLiuSir](https://github.com/DevLiuSir)
+- Chinese (Traditional), by [5idereal](https://github.com/5idereal)
+- Chinese (Traditional, Hong Kong), by [changanmoon](https://github.com/changanmoon)
+
+To translate Equinox to another language:
+- Fork the main branch 
+- Make a branch for the new translation as follows: `translation-xx` where xx is the language code (ex: en, fr, es, de, ...)
+- Add the new language to the Xcode `Equinox` & `EquinoxAssets` projects
+- Add the new language to `Localizable.strings` localization languages in `EquinoxAssets`
+- Update `Localizable.strings` for the new language with your translated strings
+- Update this part of the README with the new language
+- Write a pull request on GitHub

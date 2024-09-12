@@ -61,7 +61,7 @@ final class WallpaperCreateViewController: ViewController {
     
     private let operationQueue: OperationQueue = {
         let queue = OperationQueue()
-        queue.qualityOfService = .background
+        queue.qualityOfService = .userInitiated
         return queue
     }()
 
@@ -74,7 +74,6 @@ final class WallpaperCreateViewController: ViewController {
     }()
     
     private var createdImage: Data?
-    private var savedUrl: URL?
 
     // MARK: - Initializer
 
@@ -140,9 +139,9 @@ final class WallpaperCreateViewController: ViewController {
     
     // MARK: - Public
     
-    public weak var delegate: WallpaperCreateViewControllerDelegate?
+    weak var delegate: WallpaperCreateViewControllerDelegate?
     
-    public func continueSaveImage() {
+    func continueSaveImage() {
         saveImage(notify: false) { [weak self] savedUrl in
             guard let mainScreen = NSScreen.main, let url = savedUrl else {
                 self?.delegate?.createViewControllerShouldNotify(Localization.Wallpaper.Create.setError)
@@ -375,6 +374,9 @@ extension WallpaperCreateViewController: NSDraggingSource {
             return .copy
 
         case .withinApplication:
+            return []
+            
+        @unknown default:
             return []
         }
     }
